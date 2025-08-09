@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Partnership Opportunity</title>
+    <style>
+        /* Reset styles */
+        body, table, td, p, a, li, blockquote {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        table, td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        /* Base styles */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            min-width: 100%;
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        /* Container styles */
+        .email-container {
+            max-width: 650px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .email-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            padding: 40px 35px;
+            text-align: center;
+            position: relative;
+        }
+
+        .email-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .email-body {
+            padding: 45px 35px;
+        }
+
+        .email-footer {
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 30px 35px;
+            text-align: center;
+        }
+
+        /* Typography */
+        .header-title {
+            color: #ffffff;
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-subtitle {
+            color: #ecf0f1;
+            font-size: 18px;
+            margin: 0;
+            font-weight: 300;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin: 30px 0 20px 0;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0 0 18px 0;
+            line-height: 1.7;
+        }
+
+        .intro-text {
+            font-size: 18px;
+            color: #3498db;
+            font-weight: 500;
+        }
+
+        /* Button styles */
+        .cta-button {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 25px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+        }
+
+        .secondary-button {
+            display: inline-block;
+            padding: 12px 25px;
+            border: 2px solid #3498db;
+            color: #3498db !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background-color: #3498db;
+            color: #ffffff !important;
+        }
+
+        /* Value proposition styles */
+        .value-props {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid #3498db;
+        }
+
+        .value-prop-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .value-prop-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .value-prop-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .value-prop-content h3 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .value-prop-content p {
+            margin: 0;
+            color: #5a6c7d;
+            font-size: 15px;
+        }
+
+        /* Stats/metrics section */
+        .metrics {
+            background: #2c3e50;
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #bdc3c7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Company highlight */
+        .company-highlight {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .company-highlight::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .company-highlight-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Footer styles */
+        .footer-text {
+            font-size: 13px;
+            color: #bdc3c7;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            margin: 20px 0;
+        }
+
+        .footer-links a {
+            color: #3498db;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Signature styles */
+        .signature {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #3498db;
+        }
+
+        .signature-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .signature-title {
+            font-size: 16px;
+            color: #3498db;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .signature-contact {
+            font-size: 14px;
+            color: #5a6c7d;
+            line-height: 1.4;
+        }
+
+        /* Responsive design */
+        @media only screen and (max-width: 650px) {
+            .email-container {
+                margin: 10px !important;
+                border-radius: 8px !important;
+            }
+
+            .email-header,
+            .email-body,
+            .email-footer {
+                padding: 25px 20px !important;
+            }
+
+            .header-title {
+                font-size: 26px !important;
+            }
+
+            .header-subtitle {
+                font-size: 16px !important;
+            }
+
+            .value-props,
+            .metrics,
+            .signature {
+                padding: 20px !important;
+            }
+
+            .value-prop-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .value-prop-icon {
+                margin: 0 auto 15px auto;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .metric-number {
+                font-size: 28px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header Section -->
+        <div class="email-header">
+            <div class="header-content">
+                <h1 class="header-title">Partnership Opportunity</h1>
+                <p class="header-subtitle">Helping {{ $json.company || 'businesses like yours' }} scale faster</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="email-body">
+            <!-- Opening -->
+            <p class="intro-text">{{ $json.greeting || 'Hello' }} {{ $json.first_name }},</p>
+
+            <p>I hope this email finds you thriving at {{ $json.company || 'your company' }}. I've been following your company's growth and I'm impressed by {{ $json.company || 'your' }} commitment to innovation in {{ $json.industry || 'your industry' }}.</p>
+
+            <!-- Value Proposition -->
+            <p>I'm reaching out because I believe there's a significant opportunity for us to collaborate and drive mutual growth. Our solution has helped similar companies achieve remarkable results:</p>
+
+            <!-- Metrics Section -->
+            <div class="metrics">
+                <h2 style="color: #ffffff; margin-top: 0;">Results That Matter</h2>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <span class="metric-number">300%</span>
+                        <div class="metric-label">Average ROI</div>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-number">45</span>
+                        <div class="metric-label">Days to Results</div>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-number">98%</span>
+                        <div class="metric-label">Client Satisfaction</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Value Props -->
+            <div class="value-props">
+                <h2 style="margin-top: 0;">Why {{ $json.company || 'Your Company' }}?</h2>
+
+                <div class="value-prop-item">
+                    <div class="value-prop-icon">🎯</div>
+                    <div class="value-prop-content">
+                        <h3>Targeted Solutions</h3>
+                        <p>Custom strategies designed specifically for {{ $json.industry || 'your industry' }} challenges and opportunities.</p>
+                    </div>
+                </div>
+
+                <div class="value-prop-item">
+                    <div class="value-prop-icon">⚡</div>
+                    <div class="value-prop-content">
+                        <h3>Rapid Implementation</h3>
+                        <p>Get up and running in weeks, not months, with our proven deployment methodology.</p>
+                    </div>
+                </div>
+
+                <div class="value-prop-item">
+                    <div class="value-prop-icon">📈</div>
+                    <div class="value-prop-content">
+                        <h3>Measurable Growth</h3>
+                        <p>Track ROI with detailed analytics and reporting that shows real business impact.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Field Highlight -->
+            {% if $json.custom_field_1 %}
+            <div class="company-highlight">
+                <div class="company-highlight-content">
+                    <p style="margin: 0; font-size: 18px; font-weight: 500;">
+                        <strong>Special Opportunity:</strong> As a {{ $json.custom_field_1 }} company, you qualify for our exclusive partnership program with additional benefits and dedicated support.
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Social Proof -->
+            <h2>Companies Like Yours Are Already Succeeding</h2>
+            <p>We've partnered with leading {{ $json.industry || 'industry' }} companies including TechCorp, InnovateLLC, and GrowthPartners to deliver exceptional results. Our clients typically see:</p>
+            <ul style="padding-left: 20px; color: #5a6c7d;">
+                <li><strong>40% reduction</strong> in operational costs within 6 months</li>
+                <li><strong>2.5x increase</strong> in customer acquisition rates</li>
+                <li><strong>60% improvement</strong> in team productivity and efficiency</li>
+            </ul>
+
+            <!-- Call to Action -->
+            <p>I'd love to explore how we can create similar results for {{ $json.company || 'your company' }}. Would you be open to a brief 20-minute conversation to discuss the possibilities?</p>
+
+            <div style="text-align: center; margin: 35px 0;">
+                <a href="https://calendly.com/your-calendar/business-consultation" class="cta-button">
+                    Schedule a Strategic Call
+                </a>
+            </div>
+
+            <p style="text-align: center; margin-top: 20px;">
+                <a href="mailto:{{ $env.SENDER_EMAIL }}?subject=Partnership Inquiry - {{ $json.company }}" class="secondary-button">Email Me Directly</a>
+                <a href="tel:{{ $env.SENDER_PHONE }}" class="secondary-button">Call Now</a>
+            </p>
+
+            <!-- Alternative -->
+            <p style="font-size: 15px; color: #7f8c8d; text-align: center; margin-top: 30px;">
+                Not ready to talk? <a href="{{ $env.COMPANY_WEBSITE }}/case-studies" style="color: #3498db;">View our case studies</a> to see how we've helped companies like {{ $json.company || 'yours' }} achieve their goals.
+            </p>
+
+            <!-- Signature -->
+            <div class="signature">
+                <div class="signature-name">{{ $env.SENDER_NAME || 'Your Name' }}</div>
+                <div class="signature-title">{{ $env.SENDER_TITLE || 'Business Development Director' }}</div>
+                <div class="signature-contact">
+                    📧 {{ $env.SENDER_EMAIL }}<br>
+                    {% if $env.SENDER_PHONE %}📞 {{ $env.SENDER_PHONE }}<br>{% endif %}
+                    🏢 {{ $env.COMPANY_NAME || 'Your Company' }}<br>
+                    {% if $env.COMPANY_WEBSITE %}🌐 <a href="{{ $env.COMPANY_WEBSITE }}" style="color: #3498db;">{{ $env.COMPANY_WEBSITE }}</a>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="email-footer">
+            <div class="footer-text">
+                <p><strong>{{ $env.COMPANY_NAME || 'Your Company' }}</strong></p>
+                {% if $env.COMPANY_ADDRESS %}<p>{{ $env.COMPANY_ADDRESS }}</p>{% endif %}
+                <p>This email was sent to {{ $json.email }} because you or your company was identified as a potential strategic partner. We respect your time and inbox.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="{{ $env.UNSUBSCRIBE_URL || '#' }}?email={{ $json.email | urlencode }}">Unsubscribe</a>
+                <a href="{{ $env.PRIVACY_POLICY_URL || '#' }}">Privacy Policy</a>
+                <a href="{{ $env.COMPANY_WEBSITE || '#' }}">Our Website</a>
+                <a href="mailto:{{ $env.SUPPORT_EMAIL || $env.SENDER_EMAIL }}">Support</a>
+            </div>
+
+            <p class="footer-text" style="margin-bottom: 0; font-size: 12px;">
+                © {{ 'now' | date: '%Y' }} {{ $env.COMPANY_NAME || 'Your Company' }}. All rights reserved.
+            </p>
+        </div>
+    </div>
+
+    <!-- Tracking Pixel -->
+    {% if $env.TRACKING_ENABLED %}
+    <img src="{{ $env.TRACKING_URL }}?email={{ $json.email | urlencode }}&campaign=business-outreach&company={{ $json.company | urlencode }}"
+         width="1" height="1" border="0" style="display: none;" alt="">
+    {% endif %}
+</body>
+</html>

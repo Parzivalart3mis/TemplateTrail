@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Email</title>
+    <style>
+        /* Reset styles */
+        body, table, td, p, a, li, blockquote {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        table, td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+
+        /* Base styles */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            min-width: 100%;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333333;
+        }
+
+        /* Container styles */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .email-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .email-body {
+            padding: 40px 30px;
+        }
+
+        .email-footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Typography */
+        h1 {
+            color: #ffffff;
+            font-size: 28px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        h2 {
+            color: #333333;
+            font-size: 24px;
+            margin: 0 0 20px 0;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0 0 20px 0;
+            line-height: 1.6;
+        }
+
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* List styles */
+        .benefits-list {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .benefits-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .benefits-list li {
+            margin-bottom: 10px;
+            color: #333333;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        /* Footer styles */
+        .footer-text {
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.4;
+        }
+
+        .footer-links {
+            margin-top: 20px;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 12px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive design */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+
+            .email-header,
+            .email-body,
+            .email-footer {
+                padding: 20px !important;
+            }
+
+            h1 {
+                font-size: 24px !important;
+            }
+
+            h2 {
+                font-size: 20px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header Section -->
+        <div class="email-header">
+            <h1>{{ $json.greeting || 'Hello' }} {{ $json.first_name }}!</h1>
+        </div>
+
+        <!-- Main Content -->
+        <div class="email-body">
+            <!-- Opening -->
+            <p>
+                {% if $json.company %}
+                I hope this email finds you well at {{ $json.company }}.
+                {% else %}
+                I hope this email finds you well.
+                {% endif %}
+            </p>
+
+            <!-- Main Message -->
+            <p>I wanted to reach out personally because I believe we have something that could really benefit
+            {% if $json.company %}{{ $json.company }}{% else %}you{% endif %}.</p>
+
+            <!-- Benefits Section -->
+            <div class="benefits-list">
+                <h2>Here's what makes our solution special:</h2>
+                <ul>
+                    <li>✅ <strong>Personalized Approach:</strong> Tailored specifically to your industry and needs</li>
+                    <li>✅ <strong>Proven Results:</strong> Join thousands of satisfied customers who've seen real improvements</li>
+                    <li>✅ <strong>Easy Implementation:</strong> Get started quickly with our dedicated support team</li>
+                    <li>✅ <strong>Ongoing Support:</strong> We're with you every step of the way</li>
+                </ul>
+            </div>
+
+            <!-- Custom Field Highlight -->
+            {% if $json.custom_field_1 %}
+            <div class="highlight-box">
+                <p style="margin: 0;"><strong>Special Note:</strong> As a valued {{ $json.custom_field_1 }} customer,
+                you'll receive priority access to our latest features and dedicated account management.</p>
+            </div>
+            {% endif %}
+
+            <!-- Call to Action -->
+            <p>I'd love to show you exactly how this could work for
+            {% if $json.company %}{{ $json.company }}{% else %}you{% endif %}.
+            Would you be interested in a quick 15-minute conversation?</p>
+
+            <div style="text-align: center;">
+                <a href="https://calendly.com/your-calendar" class="btn">Schedule a Call</a>
+            </div>
+
+            <!-- Alternative Contact -->
+            <p>Or if you prefer, feel free to reply to this email with any questions. I'm here to help!</p>
+
+            <!-- Closing -->
+            <p>
+                Best regards,<br>
+                <strong>{{ $env.SENDER_NAME || 'Your Name' }}</strong><br>
+                {% if $env.SENDER_TITLE %}{{ $env.SENDER_TITLE }}<br>{% endif %}
+                {{ $env.COMPANY_NAME || 'Your Company' }}
+            </p>
+
+            <!-- Contact Information -->
+            {% if $env.SENDER_PHONE %}
+            <p style="font-size: 14px; color: #666;">
+                📞 {{ $env.SENDER_PHONE }}<br>
+                📧 {{ $env.SENDER_EMAIL }}<br>
+                {% if $env.COMPANY_WEBSITE %}🌐 {{ $env.COMPANY_WEBSITE }}{% endif %}
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <div class="email-footer">
+            <div class="footer-text">
+                <p>This email was sent by {{ $env.COMPANY_NAME || 'Your Company' }}</p>
+                {% if $env.COMPANY_ADDRESS %}
+                <p>{{ $env.COMPANY_ADDRESS }}</p>
+                {% endif %}
+
+                <p>You received this email because you signed up for updates from us.
+                We respect your privacy and will never share your information with third parties.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="{{ $env.UNSUBSCRIBE_URL || '#' }}?email={{ $json.email | urlencode }}">Unsubscribe</a>
+                <a href="{{ $env.PRIVACY_POLICY_URL || '#' }}">Privacy Policy</a>
+                <a href="mailto:{{ $env.REPLY_TO_EMAIL || $env.SENDER_EMAIL }}">Contact Us</a>
+                {% if $env.COMPANY_WEBSITE %}
+                <a href="{{ $env.COMPANY_WEBSITE }}">Visit Our Website</a>
+                {% endif %}
+            </div>
+
+            <p class="footer-text" style="margin-top: 20px; font-size: 11px;">
+                © {{ 'now' | date: '%Y' }} {{ $env.COMPANY_NAME || 'Your Company' }}. All rights reserved.
+            </p>
+        </div>
+    </div>
+
+    <!-- Tracking Pixel (optional) -->
+    {% if $env.TRACKING_ENABLED %}
+    <img src="{{ $env.TRACKING_URL }}?email={{ $json.email | urlencode }}&campaign=basic-template"
+         width="1" height="1" border="0" style="display: none;" alt="">
+    {% endif %}
+</body>
+</html>

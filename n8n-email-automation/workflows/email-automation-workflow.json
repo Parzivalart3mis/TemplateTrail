@@ -1,0 +1,450 @@
+{
+  "name": "Personalized Email Campaign",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-node",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $env.GOOGLE_SHEET_ID }}",
+          "mode": "expression"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $env.WORKSHEET_NAME || 'Contacts' }}",
+          "mode": "expression"
+        },
+        "options": {
+          "useHeaderNames": true,
+          "range": ""
+        }
+      },
+      "id": "read-contacts",
+      "name": "Read Contacts from Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        460,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-oauth",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filter contacts that haven't been sent yet and validate email format\nconst items = $input.all();\nconst validContacts = [];\nconst errors = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  \n  // Skip if already sent\n  if (contact.status === 'sent') {\n    continue;\n  }\n  \n  // Validate required fields\n  if (!contact.email) {\n    errors.push({ error: 'Missing email', contact });\n    continue;\n  }\n  \n  if (!contact.first_name) {\n    errors.push({ error: 'Missing first_name', contact });\n    continue;\n  }\n  \n  // Validate email format\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  if (!emailRegex.test(contact.email)) {\n    errors.push({ error: 'Invalid email format', contact });\n    continue;\n  }\n  \n  // Add to valid contacts\n  validContacts.push({\n    json: {\n      ...contact,\n      status: 'processing',\n      processing_date: new Date().toISOString()\n    }\n  });\n}\n\n// Log validation results\nconsole.log(`Valid contacts: ${validContacts.length}`);\nconsole.log(`Validation errors: ${errors.length}`);\n\nif (errors.length > 0) {\n  console.log('Validation errors:', errors);\n}\n\nreturn validContacts;"
+      },
+      "id": "validate-contacts",
+      "name": "Validate Contacts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": "={{ parseInt($env.BATCH_SIZE) || 10 }}",
+        "options": {}
+      },
+      "id": "split-batches",
+      "name": "Split into Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Personalize email content for each contact\nconst items = $input.all();\nconst personalizedContacts = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  \n  // Get current time for personalized greetings\n  const now = new Date();\n  const hour = now.getHours();\n  let greeting = 'Hello';\n  \n  if (hour < 12) {\n    greeting = 'Good morning';\n  } else if (hour < 17) {\n    greeting = 'Good afternoon';\n  } else {\n    greeting = 'Good evening';\n  }\n  \n  // Create personalized subject line\n  let subject = `${greeting} ${contact.first_name}`;\n  if (contact.company) {\n    subject += ` - Special offer for ${contact.company}`;\n  } else {\n    subject += ` - We have something special for you`;\n  }\n  \n  // Create personalized email body\n  const emailBody = `\n    <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n      <p style=\"font-size: 16px;\">${greeting} ${contact.first_name},</p>\n      \n      ${contact.company ? `<p>I hope things are going well at ${contact.company}.</p>` : ''}\n      \n      <p>I wanted to reach out personally because I believe we have something that could really benefit ${contact.company || 'you'}.</p>\n      \n      <p>Based on your profile, I think you'd be interested in our latest offering. Here's what makes it special:</p>\n      \n      <ul style=\"line-height: 1.6;\">\n        <li>✅ Personalized approach tailored to your needs</li>\n        <li>✅ Proven results with companies like yours</li>\n        <li>✅ Easy implementation with full support</li>\n      </ul>\n      \n      ${contact.custom_field_1 ? `<p><strong>Special note:</strong> Since you're in our ${contact.custom_field_1} tier, you'll get priority access to new features.</p>` : ''}\n      \n      <p>Would you be interested in a quick 15-minute call to discuss how this could work for ${contact.company || 'you'}?</p>\n      \n      <p>Best regards,<br>\n      <strong>${process.env.SENDER_NAME || 'Your Name'}</strong><br>\n      ${process.env.COMPANY_NAME || 'Your Company'}</p>\n      \n      <hr style=\"border: none; border-top: 1px solid #eee; margin: 30px 0;\">\n      \n      <div style=\"font-size: 12px; color: #666; text-align: center;\">\n        <p>This email was sent by ${process.env.COMPANY_NAME || 'Your Company'}<br>\n        ${process.env.COMPANY_ADDRESS || 'Your Address'}</p>\n        \n        <p>\n          <a href=\"${process.env.UNSUBSCRIBE_URL || '#'}?email=${encodeURIComponent(contact.email)}\" \n             style=\"color: #666; text-decoration: underline;\">Unsubscribe</a> | \n          <a href=\"mailto:${process.env.REPLY_TO_EMAIL || process.env.SENDER_EMAIL}\" \n             style=\"color: #666; text-decoration: underline;\">Contact Us</a>\n        </p>\n      </div>\n    </div>\n  `;\n  \n  personalizedContacts.push({\n    json: {\n      ...contact,\n      personalized_subject: subject,\n      personalized_body: emailBody,\n      greeting: greeting\n    }\n  });\n}\n\nreturn personalizedContacts;"
+      },
+      "id": "personalize-content",
+      "name": "Personalize Email Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.personalized_subject }}",
+        "emailType": "html",
+        "message": "={{ $json.personalized_body }}",
+        "options": {
+          "replyTo": "={{ $env.REPLY_TO_EMAIL || $env.SENDER_EMAIL }}",
+          "senderName": "={{ $env.SENDER_NAME || 'Your Name' }}"
+        }
+      },
+      "id": "send-email",
+      "name": "Send Personalized Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1340,
+        300
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth",
+          "name": "Gmail OAuth2"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare data for updating Google Sheets with send status\nconst items = $input.all();\nconst updates = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  const wasSuccessful = !item.error;\n  \n  updates.push({\n    json: {\n      email: contact.email,\n      status: wasSuccessful ? 'sent' : 'failed',\n      sent_date: wasSuccessful ? new Date().toISOString() : '',\n      error_message: item.error ? item.error.message : '',\n      row_number: contact.row_number || '' // Will be used to update specific rows\n    }\n  });\n}\n\nconsole.log(`Processing ${updates.length} status updates`);\nreturn updates;"
+      },
+      "id": "prepare-status-update",
+      "name": "Prepare Status Updates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $env.GOOGLE_SHEET_ID }}",
+          "mode": "expression"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $env.WORKSHEET_NAME || 'Contacts' }}",
+          "mode": "expression"
+        },
+        "columnToMatchOn": "email",
+        "valueToMatchOn": "={{ $json.email }}",
+        "fieldsToUpdate": {
+          "values": [
+            {
+              "fieldName": "status",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldName": "sent_date",
+              "fieldValue": "={{ $json.sent_date }}"
+            },
+            {
+              "fieldName": "error_message",
+              "fieldValue": "={{ $json.error_message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-status",
+      "name": "Update Contact Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1780,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-oauth",
+          "name": "Google Sheets OAuth2"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "amount": "={{ parseInt($env.BATCH_DELAY_MINUTES) || 1 }}",
+        "unit": "minutes"
+      },
+      "id": "batch-delay",
+      "name": "Delay Between Batches",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate campaign summary report\nconst allItems = $input.all();\nconst summary = {\n  total_processed: 0,\n  successful_sends: 0,\n  failed_sends: 0,\n  campaign_date: new Date().toISOString(),\n  details: []\n};\n\nfor (const item of allItems) {\n  summary.total_processed++;\n  \n  if (item.json.status === 'sent') {\n    summary.successful_sends++;\n  } else {\n    summary.failed_sends++;\n    summary.details.push({\n      email: item.json.email,\n      error: item.json.error_message\n    });\n  }\n}\n\nsummary.success_rate = summary.total_processed > 0 \n  ? Math.round((summary.successful_sends / summary.total_processed) * 100) \n  : 0;\n\nconsole.log('Campaign Summary:', JSON.stringify(summary, null, 2));\n\nreturn [{ json: summary }];"
+      },
+      "id": "campaign-summary",
+      "name": "Generate Campaign Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "error-condition",
+              "leftValue": "={{ $json.failed_sends }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-errors",
+      "name": "Check for Errors",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.ADMIN_EMAIL || $env.SENDER_EMAIL }}",
+        "subject": "Email Campaign Alert - {{ $json.failed_sends }} Failed Sends",
+        "emailType": "html",
+        "message": "<h2>Email Campaign Alert</h2>\n<p><strong>Campaign Date:</strong> {{ $json.campaign_date }}</p>\n<p><strong>Total Processed:</strong> {{ $json.total_processed }}</p>\n<p><strong>Successful Sends:</strong> {{ $json.successful_sends }}</p>\n<p><strong>Failed Sends:</strong> {{ $json.failed_sends }}</p>\n<p><strong>Success Rate:</strong> {{ $json.success_rate }}%</p>\n\n{% if $json.details.length > 0 %}\n<h3>Failed Send Details:</h3>\n<ul>\n{% for detail in $json.details %}\n  <li><strong>{{ detail.email }}:</strong> {{ detail.error }}</li>\n{% endfor %}\n</ul>\n{% endif %}\n\n<p>Please review the campaign results and take necessary action.</p>",
+        "options": {
+          "replyTo": "={{ $env.SENDER_EMAIL }}",
+          "senderName": "Email Campaign System"
+        }
+      },
+      "id": "error-notification",
+      "name": "Send Error Notification",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2660,
+        200
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.ADMIN_EMAIL || $env.SENDER_EMAIL }}",
+        "subject": "Email Campaign Completed Successfully - {{ $json.successful_sends }} Emails Sent",
+        "emailType": "html",
+        "message": "<h2>Email Campaign Completed Successfully! 🎉</h2>\n<p><strong>Campaign Date:</strong> {{ $json.campaign_date }}</p>\n<p><strong>Total Processed:</strong> {{ $json.total_processed }}</p>\n<p><strong>Successful Sends:</strong> {{ $json.successful_sends }}</p>\n<p><strong>Success Rate:</strong> {{ $json.success_rate }}%</p>\n\n<p>Your email campaign has been completed successfully. All recipients have received their personalized emails.</p>",
+        "options": {
+          "replyTo": "={{ $env.SENDER_EMAIL }}",
+          "senderName": "Email Campaign System"
+        }
+      },
+      "id": "success-notification",
+      "name": "Send Success Notification",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2660,
+        400
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth",
+          "name": "Gmail OAuth2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Contacts from Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Contacts from Sheet": {
+      "main": [
+        [
+          {
+            "node": "Validate Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Contacts": {
+      "main": [
+        [
+          {
+            "node": "Split into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split into Batches": {
+      "main": [
+        [
+          {
+            "node": "Personalize Email Content",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Campaign Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Personalize Email Content": {
+      "main": [
+        [
+          {
+            "node": "Send Personalized Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Personalized Email": {
+      "main": [
+        [
+          {
+            "node": "Prepare Status Updates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Status Updates": {
+      "main": [
+        [
+          {
+            "node": "Update Contact Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Contact Status": {
+      "main": [
+        [
+          {
+            "node": "Delay Between Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Between Batches": {
+      "main": [
+        [
+          {
+            "node": "Split into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Campaign Summary": {
+      "main": [
+        [
+          {
+            "node": "Check for Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for Errors": {
+      "main": [
+        [
+          {
+            "node": "Send Error Notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowOwner",
+    "errorWorkflow": {
+      "errorWorkflow": "",
+      "continueOnFail": false
+    }
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "email-automation",
+      "name": "Email Automation"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}
