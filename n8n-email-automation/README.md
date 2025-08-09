@@ -30,7 +30,7 @@ Before starting, ensure you have:
 ### 1. Clone This Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Parzivalart3mis/TemplateTrail.git
 cd n8n-email-automation
 ```
 
@@ -147,7 +147,7 @@ UNSUBSCRIBE_URL=https://your-domain.com/unsubscribe
 The system uses dynamic templates with these variables:
 
 - `{{ $json.first_name }}` - Recipient's first name
-- `{{ $json.last_name }}` - Recipient's last name  
+- `{{ $json.last_name }}` - Recipient's last name
 - `{{ $json.company }}` - Recipient's company
 - `{{ $json.custom_field_1 }}` - Custom field data
 - `{{ $env.SENDER_NAME }}` - Your name
@@ -244,7 +244,7 @@ Enable detailed logging by:
 
 The system tracks:
 - Total emails sent
-- Success/failure rates  
+- Success/failure rates
 - Bounce notifications
 - Unsubscribe requests
 
