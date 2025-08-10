@@ -21,14 +21,14 @@ Get your personalized email automation system up and running in under 30 minutes
 ### 2. One-Line Setup
 
 ```bash
-git clone <repository-url> && cd n8n-email-automation && ./scripts/setup.sh
+git clone https://github.com/Parzivalart3mis/TemplateTrail.git && cd n8n-email-automation && ./scripts/setup.sh
 ```
 
 **OR Manual Setup:**
 
 ```bash
 # Clone and configure
-git clone <repository-url>
+git clone https://github.com/Parzivalart3mis/TemplateTrail.git
 cd n8n-email-automation
 cp .env.docker .env
 
@@ -241,6 +241,6 @@ n8n-email-automation/
 
 **🎉 You're Ready!** Your email automation system should now be running. Start with test emails and gradually scale up your campaigns.
 
-**⏱️ Total Setup Time**: ~30 minutes  
-**First Email**: ~5 minutes after setup  
+**⏱️ Total Setup Time**: ~30 minutes
+**First Email**: ~5 minutes after setup
 **Production Ready**: ~2 hours with SSL and monitoring
