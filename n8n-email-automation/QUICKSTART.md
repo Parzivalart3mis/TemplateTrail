@@ -20,7 +20,7 @@ Get your personalized email automation system up and running in under 30 minutes
 
 ### 2. One-Line Setup
 
-```bash
+```bashn
 git clone https://github.com/Parzivalart3mis/TemplateTrail.git && cd n8n-email-automation && ./scripts/setup.sh
 ```
 

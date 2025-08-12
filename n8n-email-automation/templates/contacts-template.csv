@@ -1,9 +1,9 @@
-email,first_name,last_name,company,status,sent_date,custom_field_1,custom_field_2
-john.doe@example.com,John,Doe,Tech Corp,pending,,Premium,Technology
-jane.smith@company.com,Jane,Smith,Design LLC,pending,,Basic,Design
-mike.johnson@startup.io,Mike,Johnson,StartupIO,pending,,Enterprise,Software
-sarah.wilson@enterprise.com,Sarah,Wilson,Enterprise Inc,pending,,Premium,Finance
-david.brown@consulting.com,David,Brown,Brown Consulting,pending,,Standard,Consulting
-lisa.garcia@marketing.co,Lisa,Garcia,Marketing Co,pending,,Premium,Marketing
-robert.taylor@logistics.net,Robert,Taylor,Logistics Network,pending,,Basic,Logistics
-amanda.moore@healthcare.org,Amanda,Moore,Healthcare Plus,pending,,Enterprise,Healthcare
+email,name,company,status,sent_date,custom_field_1,custom_field_2
+john.doe@example.com,John Doe,Tech Corp,, ,Premium,Technology
+jane.smith@company.com,Jane Smith,Design LLC,, ,Basic,Design
+mike.johnson@startup.io,Mike Johnson,StartupIO,, ,Enterprise,Software
+sarah.wilson@enterprise.com,Sarah Wilson,Enterprise Inc,, ,Premium,Finance
+david.brown@consulting.com,David Brown,Brown Consulting,, ,Standard,Consulting
+lisa.garcia@marketing.co,Lisa Garcia,Marketing Co,, ,Premium,Marketing
+robert.taylor@logistics.net,Robert Taylor,Logistics Network,, ,Basic,Logistics
+amanda.moore@healthcare.org,Amanda Moore,Healthcare Plus,, ,Enterprise,Healthcare

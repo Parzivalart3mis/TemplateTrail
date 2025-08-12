@@ -48,7 +48,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Filter contacts that haven't been sent yet and validate email format\nconst items = $input.all();\nconst validContacts = [];\nconst errors = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  \n  // Skip if already sent\n  if (contact.status === 'sent') {\n    continue;\n  }\n  \n  // Validate required fields\n  if (!contact.email) {\n    errors.push({ error: 'Missing email', contact });\n    continue;\n  }\n  \n  if (!contact.first_name) {\n    errors.push({ error: 'Missing first_name', contact });\n    continue;\n  }\n  \n  // Validate email format\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  if (!emailRegex.test(contact.email)) {\n    errors.push({ error: 'Invalid email format', contact });\n    continue;\n  }\n  \n  // Add to valid contacts\n  validContacts.push({\n    json: {\n      ...contact,\n      status: 'processing',\n      processing_date: new Date().toISOString()\n    }\n  });\n}\n\n// Log validation results\nconsole.log(`Valid contacts: ${validContacts.length}`);\nconsole.log(`Validation errors: ${errors.length}`);\n\nif (errors.length > 0) {\n  console.log('Validation errors:', errors);\n}\n\nreturn validContacts;"
+        "jsCode": "// Filter contacts that haven't been sent yet and validate email format\nconst items = $input.all();\nconst validContacts = [];\nconst errors = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  \n  // Skip if already sent\n  if (contact.status === 'mail sent') {\n    continue;\n  }\n  \n  // Validate required fields\n  if (!contact.email) {\n    errors.push({ error: 'Missing email', contact });\n    continue;\n  }\n  \n  if (!contact.name) {\n    errors.push({ error: 'Missing name', contact });\n    continue;\n  }\n  \n  // Validate email format\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  if (!emailRegex.test(contact.email)) {\n    errors.push({ error: 'Invalid email format', contact });\n    continue;\n  }\n  \n  // Add to valid contacts\n  validContacts.push({\n    json: {\n      ...contact,\n      status: 'processing',\n      processing_date: new Date().toISOString()\n    }\n  });\n}\n\n// Log validation results\nconsole.log(`Valid contacts: ${validContacts.length}`);\nconsole.log(`Validation errors: ${errors.length}`);\n\nif (errors.length > 0) {\n  console.log('Validation errors:', errors);\n}\n\nreturn validContacts;"
       },
       "id": "validate-contacts",
       "name": "Validate Contacts",
@@ -75,7 +75,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Personalize email content for each contact\nconst items = $input.all();\nconst personalizedContacts = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  \n  // Get current time for personalized greetings\n  const now = new Date();\n  const hour = now.getHours();\n  let greeting = 'Hello';\n  \n  if (hour < 12) {\n    greeting = 'Good morning';\n  } else if (hour < 17) {\n    greeting = 'Good afternoon';\n  } else {\n    greeting = 'Good evening';\n  }\n  \n  // Create personalized subject line\n  let subject = `${greeting} ${contact.first_name}`;\n  if (contact.company) {\n    subject += ` - Special offer for ${contact.company}`;\n  } else {\n    subject += ` - We have something special for you`;\n  }\n  \n  // Create personalized email body\n  const emailBody = `\n    <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n      <p style=\"font-size: 16px;\">${greeting} ${contact.first_name},</p>\n      \n      ${contact.company ? `<p>I hope things are going well at ${contact.company}.</p>` : ''}\n      \n      <p>I wanted to reach out personally because I believe we have something that could really benefit ${contact.company || 'you'}.</p>\n      \n      <p>Based on your profile, I think you'd be interested in our latest offering. Here's what makes it special:</p>\n      \n      <ul style=\"line-height: 1.6;\">\n        <li>✅ Personalized approach tailored to your needs</li>\n        <li>✅ Proven results with companies like yours</li>\n        <li>✅ Easy implementation with full support</li>\n      </ul>\n      \n      ${contact.custom_field_1 ? `<p><strong>Special note:</strong> Since you're in our ${contact.custom_field_1} tier, you'll get priority access to new features.</p>` : ''}\n      \n      <p>Would you be interested in a quick 15-minute call to discuss how this could work for ${contact.company || 'you'}?</p>\n      \n      <p>Best regards,<br>\n      <strong>${process.env.SENDER_NAME || 'Your Name'}</strong><br>\n      ${process.env.COMPANY_NAME || 'Your Company'}</p>\n      \n      <hr style=\"border: none; border-top: 1px solid #eee; margin: 30px 0;\">\n      \n      <div style=\"font-size: 12px; color: #666; text-align: center;\">\n        <p>This email was sent by ${process.env.COMPANY_NAME || 'Your Company'}<br>\n        ${process.env.COMPANY_ADDRESS || 'Your Address'}</p>\n        \n        <p>\n          <a href=\"${process.env.UNSUBSCRIBE_URL || '#'}?email=${encodeURIComponent(contact.email)}\" \n             style=\"color: #666; text-decoration: underline;\">Unsubscribe</a> | \n          <a href=\"mailto:${process.env.REPLY_TO_EMAIL || process.env.SENDER_EMAIL}\" \n             style=\"color: #666; text-decoration: underline;\">Contact Us</a>\n        </p>\n      </div>\n    </div>\n  `;\n  \n  personalizedContacts.push({\n    json: {\n      ...contact,\n      personalized_subject: subject,\n      personalized_body: emailBody,\n      greeting: greeting\n    }\n  });\n}\n\nreturn personalizedContacts;"
+        "jsCode": "// Personalize email content for each contact using a single 'name' field\nconst items = $input.all();\nconst personalizedContacts = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  \n  // Get current time for personalized greetings\n  const now = new Date();\n  const hour = now.getHours();\n  let greeting = 'Hello';\n  \n  if (hour < 12) {\n    greeting = 'Good morning';\n  } else if (hour < 17) {\n    greeting = 'Good afternoon';\n  } else {\n    greeting = 'Good evening';\n  }\n  \n  // Derive first name from full name\n  const firstName = contact.name ? String(contact.name).trim().split(' ')[0] : 'there';\n  \n  // Create personalized subject line\n  let subject = `${greeting} ${firstName}`;\n  if (contact.company) {\n    subject += ` - Special offer for ${contact.company}`;\n  } else {\n    subject += ` - We have something special for you`;\n  }\n  \n  // Create personalized email body\n  const emailBody = `\n    <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n      <p style=\"font-size: 16px;\">${greeting} ${firstName},</p>\n      \n      ${contact.company ? `<p>I hope things are going well at ${contact.company}.</p>` : ''}\n      \n      <p>I wanted to reach out personally because I believe we have something that could really benefit ${contact.company || 'you'}.</p>\n      \n      <p>Based on your profile, I think you'd be interested in our latest offering. Here's what makes it special:</p>\n      \n      <ul style=\"line-height: 1.6;\">\n        <li>✅ Personalized approach tailored to your needs</li>\n        <li>✅ Proven results with companies like yours</li>\n        <li>✅ Easy implementation with full support</li>\n      </ul>\n      \n      ${contact.custom_field_1 ? `<p><strong>Special note:</strong> Since you're in our ${contact.custom_field_1} tier, you'll get priority access to new features.</p>` : ''}\n      \n      <p>Would you be interested in a quick 15-minute call to discuss how this could work for ${contact.company || 'you'}?</p>\n      \n      <p>Best regards,<br>\n      <strong>${process.env.SENDER_NAME || 'Your Name'}</strong><br>\n      ${process.env.COMPANY_NAME || 'Your Company'}</p>\n      \n      <hr style=\"border: none; border-top: 1px solid #eee; margin: 30px 0;\">\n      \n      <div style=\"font-size: 12px; color: #666; text-align: center;\">\n        <p>This email was sent by ${process.env.COMPANY_NAME || 'Your Company'}<br>\n        ${process.env.COMPANY_ADDRESS || 'Your Address'}</p>\n        \n        <p>\n          <a href=\"${process.env.UNSUBSCRIBE_URL || '#'}?email=${encodeURIComponent(contact.email)}\" \n             style=\"color: #666; text-decoration: underline;\">Unsubscribe</a> | \n          <a href=\"mailto:${process.env.REPLY_TO_EMAIL || process.env.SENDER_EMAIL}\" \n             style=\"color: #666; text-decoration: underline;\">Contact Us</a>\n        </p>\n      </div>\n    </div>\n  `;\n  \n  personalizedContacts.push({\n    json: {\n      ...contact,\n      first_name: firstName,\n      personalized_subject: subject,\n      personalized_body: emailBody,\n      greeting: greeting\n    }\n  });\n}\n\nreturn personalizedContacts;"
       },
       "id": "personalize-content",
       "name": "Personalize Email Content",
@@ -115,7 +115,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Prepare data for updating Google Sheets with send status\nconst items = $input.all();\nconst updates = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  const wasSuccessful = !item.error;\n  \n  updates.push({\n    json: {\n      email: contact.email,\n      status: wasSuccessful ? 'sent' : 'failed',\n      sent_date: wasSuccessful ? new Date().toISOString() : '',\n      error_message: item.error ? item.error.message : '',\n      row_number: contact.row_number || '' // Will be used to update specific rows\n    }\n  });\n}\n\nconsole.log(`Processing ${updates.length} status updates`);\nreturn updates;"
+        "jsCode": "// Prepare data for updating Google Sheets with send status\nconst items = $input.all();\nconst updates = [];\n\nfor (const item of items) {\n  const contact = item.json;\n  const wasSuccessful = !item.error;\n  \n  updates.push({\n    json: {\n      email: contact.email,\n      status: wasSuccessful ? 'mail sent' : 'failed',\n      sent_date: wasSuccessful ? new Date().toISOString() : '',\n      error_message: item.error ? item.error.message : '',\n      row_number: contact.row_number || '' // Will be used to update specific rows\n    }\n  });\n}\n\nconsole.log(`Processing ${updates.length} status updates`);\nreturn updates;"
       },
       "id": "prepare-status-update",
       "name": "Prepare Status Updates",
@@ -158,7 +158,9 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "useHeaderNames": true
+        }
       },
       "id": "update-status",
       "name": "Update Contact Status",
@@ -330,7 +332,9 @@
             "type": "main",
             "index": 0
           }
-        ],
+        ]
+      ],
+      "done": [
         [
           {
             "node": "Generate Campaign Summary",
@@ -389,7 +393,7 @@
         [
           {
             "node": "Split into Batches",
-            "type": "main",
+            "type": "loop",
             "index": 0
           }
         ]
